@@ -22,3 +22,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# My Stuff
+.DS_Store
+.vagrant
+server/src/gopkg.in
+server/src/github.com/gorilla
