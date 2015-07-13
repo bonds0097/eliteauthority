@@ -2,25 +2,40 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/bonds0097/webUtils"
+	"errors"
 	"net/http"
-	"time"
+)
+
+var (
+	categories = [...]string{"Chemicals", "Consumer Items", "Foods", "Industrial Materials",
+		"Legal Drugs", "Machinery", "Medicines", "Metals", "Minerals", "Salvage", "Slavery",
+		"Technology", "Textiles", "Waste", "Weapons"}
 )
 
 type Commodity struct {
 	Name            string `bson:"_id" json:"name"`
 	Category        string `bson:"category" json:"category"`
 	IsRare          bool   `bson:"is_rare" json:"isRare"`
-	GalacticAverage int    `bson:"galactic_average" json:"galacticAverage"`
-	Stations        map[string]struct {
-		System    System    `bson:"system" json:"system"`
-		SellPrice int       `bson:"sell_price" json:"sellPrice"`
-		BuyPrice  int       `bson:"buy_price" json:"buyPrice"`
-		Demand    int       `bson:"demand" json:"demand"`
-		Supply    int       `bson:"supply" json:"supply"`
-		Timestamp time.Time `bson:"timestamp" json:"timestamp"`
-	} `bson:"stations,omitempty" json:"stations,omitempty"`
-	Slug string `bson:"slug" json:"cSlug"`
+	GalacticAverage uint   `bson:"galactic_average,omitempty" json:"galacticAverage,omitempty"`
+}
+
+func getCommodities(w http.ResponseWriter, r *http.Request) (apiErr *ApiError) {
+	db := dbMaster.spawnDb()
+	defer db.stop()
+
+	commodities, err := db.getCommodities()
+	if len(commodities) == 0 {
+		return &ApiError{"No commodities found.", http.StatusNotFound}
+	}
+
+	if err != nil {
+		return &ApiError{DB_ERROR, http.StatusInternalServerError}
+	}
+
+	// If all is well, return the commodity list to the requestor.
+	json.NewEncoder(w).Encode(commodities)
+
+	return nil
 }
 
 func listCommodities(w http.ResponseWriter, r *http.Request) (apiErr *ApiError) {
@@ -49,17 +64,13 @@ func addCommodity(w http.ResponseWriter, r *http.Request) *ApiError {
 	err := json.NewDecoder(r.Body).Decode(&commodity)
 
 	// If unable to parse or commodity is missing data, return error.
-	if err != nil || !commodity.isValid() {
+	if err != nil {
 		return &ApiError{JSON_PARSE_ERROR, http.StatusBadRequest}
 	}
 
-	// Title Case the name and category of the commodity, to make pretty.
-	commodity.Name = normalizeString(commodity.Name)
-	commodity.Category = normalizeString(commodity.Category)
-
-	commodity.Slug, err = webUtils.GenerateSlug(commodity.Name)
+	err = commodity.validateAndNormalize()
 	if err != nil {
-		return &ApiError{"Commodity name invalid. Valid characters are alphanumeric and ~_-.", http.StatusBadRequest}
+		return &ApiError{"Failed to validate commodity.\n" + err.Error(), http.StatusBadRequest}
 	}
 
 	db := dbMaster.spawnDb()
@@ -75,10 +86,30 @@ func addCommodity(w http.ResponseWriter, r *http.Request) *ApiError {
 }
 
 // Checks if commodity is valid, all data is required except for station data.
-func (c *Commodity) isValid() (validity bool) {
-	if c.Name == "" || c.Category == "" || c.GalacticAverage == 0 {
-		return false
+func (c *Commodity) validateAndNormalize() (err error) {
+	// Name
+	if c.Name == "" || len(c.Name) < FIElD_LENGTH_MIN || len(c.Name) > FIELD_LENGTH_MAX {
+		return errors.New("Invalid or missing commodity name.")
 	}
 
-	return true
+	c.Name = normalizeString(c.Name)
+
+	// Category
+	if c.Category == "" {
+		return errors.New("Missing category.")
+	}
+
+	categoryFound := false
+	for _, category := range categories {
+		if c.Category == category {
+			categoryFound = true
+			break
+		}
+	}
+
+	if !categoryFound {
+		return errors.New("Category does not exist.")
+	}
+
+	return
 }

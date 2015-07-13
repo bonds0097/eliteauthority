@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "github.com/jasonlvhit/gocron"
 	"net/http"
 )
 
@@ -23,7 +24,11 @@ func main() {
 	dbMaster.start()
 	defer dbMaster.stop()
 
+	// gocron.Every(1).Hour().Do(getEdscUpdate)
+	// gocron.Start()
+
 	setApiHandlers()
 	setStaticHandlers()
 	http.ListenAndServe(":8080", nil)
+
 }

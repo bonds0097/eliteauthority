@@ -14,7 +14,7 @@ angular.module('clientApp')
         self.dummyCommodity = function() {
             var dummy = new Commodities({
                 name: 'Test Commodity ' + Math.floor(Math.random() * 10),
-                category: 'Test Category ' + Math.floor(Math.random() * 25),
+                category: 'Chemicals',
                 galacticAverage: Math.floor(Math.random() * 100000)
             });
 
@@ -38,7 +38,7 @@ angular.module('clientApp')
         self.dummySnapshot = function() {
             var dummy = new Snapshots({
                 commodity: 'Test Commodity ' + Math.floor(Math.random() * 10),
-                station: 'Test Stations ' + Math.floor(Math.random() * 10),
+                station: 'Test Station 1',
                 sellPrice: Math.floor(Math.random() * 100000),
                 buyPrice: Math.floor(Math.random() * 100000),
                 demand: Math.floor(Math.random() * 100000),

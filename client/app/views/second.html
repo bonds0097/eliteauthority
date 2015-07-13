@@ -1,1 +1,4 @@
 <p>This is the second view.</p>
+<pre>{{ctrl.systemSelected}}</pre>
+<input type="text" ng-model="ctrl.systemSelected" placeholder="Enter System Name" typeahead="system for system in ctrl.findSystem($viewValue)" typeahead-loading="loadingSystems" typeahead-min-length="3" typeahead-editable="false" class="form-control">
+<i ng-show="loadingSystems" class="glyphicon glyphicon-refresh"></i>

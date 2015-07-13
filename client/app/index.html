@@ -4,12 +4,13 @@
 <head>
     <meta charset="utf-8">
     <base href="/">
-    <title></title>
+    <title>Elite Authority</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <link rel="stylesheet" href="styles/vendor/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="styles/vendor/ui-grid-stable.css">
     <!-- bower:css -->
     <!-- endbower -->
     <!-- endbuild -->
@@ -24,17 +25,36 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container">
-        This is in index.html.
-        <ul>
-            <li><a href="/">Link to Main Controller</a>
-            </li>
-            <li><a href="/second">Link to Second Controller</a>
-        </ul>
-        <div class="header">
+    <nav ng-controller="NavCtrl as ctrl" class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" ng-click="ctrl.isCollapsed = !ctrl.isCollapsed">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">Elite Authority</a>
+            </div>
+            <div class="collapse navbar-collapse" collapsed="ctrl.isCollapsed">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown" dropdown is-open="ctrl.stationsDropdown.isOpen" ng-mouseenter="ctrl.showDropdown(ctrl.stationsDropdown)" ng-mouseleave="ctrl.hideDropdown(ctrl.stationsDropdown)">
+                        <a href="/stations" class="dropdown-toggle">Stations<span class="caret" ></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/stations">List Stations</a>
+                            </li>
+                            <li><a href="/stations/add">Add Station</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+    <div class="container">
         <div ng-view></div>
     </div>
+
 
 
     <!-- build:js(.) scripts/oldieshim.js -->
@@ -44,12 +64,15 @@
     <![endif]-->
     <!-- endbuild -->
 
-    <!-- build:js(.) scripts/vendor.js -->
-    <!-- bower:js -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/lodash/dist/lodash.compat.js"></script>
+    <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
+    <!-- build:js(.) scripts/vendor.js -->
+    <script type="text/javascript" src="scripts/vendor/ui-grid-stable.js"></script>
+    <!-- bower:js -->
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -59,6 +82,14 @@
     <script src="scripts/controllers/second.js"></script>
     <script src="scripts/services/commodities.js"></script>
     <script src="scripts/services/snapshots.js"></script>
+    <script src="scripts/services/stations.js"></script>
+    <script src="scripts/services/systemsearch.js"></script>
+    <script src="scripts/controllers/addstation.js"></script>
+    <script src="scripts/controllers/nav.js"></script>
+    <script src="scripts/controllers/addcommoditymodal.js"></script>
+    <script src="scripts/services/gamedataservice.js"></script>
+    <script src="scripts/controllers/stations.js"></script>
+    <script src="scripts/controllers/viewStation.js"></script>
     <!-- endbuild -->
 </body>
 

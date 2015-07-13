@@ -1,0 +1,309 @@
+<div class="page-header">
+    <h1>Add Station</h1>
+</div>
+
+<row class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+    <alert ng-repeat="alert in ctrl.alerts" type="{{alert.type}}" close="ctrl.closeAlert($index)">{{alert.message}}</alert>
+</row>
+
+<form name="ctrl.form" class="form-horizontal" novalidate>
+    <!-- First Section Header -->
+    <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+        <h2>Basic Data</h2>
+    </div>
+    <!-- Station Name -->
+    <div class="form-group">
+        <label for="stationName" class="col-sm-{{ctrl.css.labelWidth}} control-label">Name</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <input type="text" class="form-control" id="stationName" name="ctrl.inputs.StationName" placeholder="Enter Station Name" ng-model="ctrl.newStation.name" required minlength="3" maxlength="255">
+        </div>
+    </div>
+    <!-- Station Type -->
+    <div class="form-group">
+        <label for="stationType" class="col-sm-{{ctrl.css.labelWidth}} control-label">Type</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <select class="form-control" ng-options="type for type in ctrl.stationTypes" id="stationType" ng-model="ctrl.newStation.type">
+                <option value="">-- Choose Station Type --</option>
+            </select>
+        </div>
+    </div>
+    <!-- Station System -->
+    <div class="form-group">
+        <label for="stationSystem" class="col-sm-{{ctrl.css.labelWidth}} control-label">System</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <input type="text" ng-model="ctrl.newStation.system.name" placeholder="Enter System Name" typeahead="system for system in ctrl.findSystem($viewValue)" typeahead-loading="loadingSystems" typeahead-min-length="3" typeahead-editable="false" class="form-control" required>
+            <i ng-show="loadingSystems" class="glyphicon glyphicon-refresh"></i>
+        </div>
+    </div>
+    <!-- Station Distance from Jump -->
+    <div class="form-group">
+        <label for="stationDist" class="col-sm-{{ctrl.css.labelWidth}} control-label">Distance from Jump</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <input type="number" class="form-control" ng-model="ctrl.enteredDist" placeholder="0" id="stationDist">
+        </div>
+        <div class="col-sm-{{ctrl.css.addonWidth}}">
+            <select id="distUnit" class="form-control" ng-options="unit.label for unit in ctrl.distUnits" ng-model="ctrl.selectedDistUnit"></select>
+        </div>
+    </div>
+    <!-- Station Wealth -->
+    <div class="form-group">
+        <label for="stationWealth" class="col-sm-{{ctrl.css.labelWidth}} control-label">Wealth</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <select class="form-control" name="ctrl.inputs.stationWealth" id="stationWealth" ng-options="wealth for wealth in ctrl.stationWealth" ng-model="ctrl.newStation.wealth">
+                <option value="">-- Choose Station Wealth --</option>
+            </select>
+        </div>
+    </div>
+    <!-- Station Population -->
+    <div class="form-group">
+        <label for="stationPopulation" class="col-sm-{{ctrl.css.labelWidth}} control-label">Population</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <select class="form-control" name="ctrl.inputs.stationPopulation" id="stationPopulation" ng-options="population for population in ctrl.stationPopulation" ng-model="ctrl.newStation.population">
+                <option value="">-- Choose Station Population --</option>
+            </select>
+        </div>
+    </div>
+    <!-- Station Economies -->
+    <div class="form-group">
+        <label for="stationEconomies" class="col-sm-{{ctrl.css.labelWidth}} control-label">Economies</label>
+        <div ng-repeat="economy in ctrl.newStation.economies">
+            <div ng-if="$first" class="col-sm-{{ctrl.css.inputWidth}}">
+                <select class="form-control" id="stationEconomies" ng-options="economy for economy in ctrl.difference(ctrl.stationEconomies, ctrl.newStation.economies)" ng-model="ctrl.newStation.economies[$index]">
+                    <option value="">{{ ctrl.newStation.economies[$index] ? ctrl.newStation.economies[$index] : "-- Choose Station Economy --"}}</option>
+                </select>
+            </div>
+            <div ng-if="$first && $last && ctrl.newStation.economies[$index]" class="col-sm-{{ctrl.css.addonWidth}} first-stacked-btn-xs">
+                <button class="btn btn-success btn-xs" ng-click="ctrl.newStation.economies.push(null)"><span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </div>
+            <div ng-if="!$first">
+                <div ng-if="!$first" class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}} stacked-input">
+                    <select class="form-control" ng-options="economy for economy in ctrl.difference(ctrl.stationEconomies, ctrl.newStation.economies)" ng-model="ctrl.newStation.economies[$index]">
+                        <option value="">{{ ctrl.newStation.economies[$index] ? ctrl.newStation.economies[$index] : "-- Choose Station Economy --"}}</option>
+                    </select>
+                </div>
+                <div class="col-sm-{{ctrl.css.addonWidth}} stacked-btn-xs">
+                    <button ng-if="!$first && ctrl.newStation.economies[$index]" class="btn btn-danger btn-xs" ng-click="ctrl.newStation.economies.splice($index,1)"><span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <button ng-if="$last && ctrl.newStation.economies[$index]" class="btn btn-success btn-xs" ng-click="ctrl.newStation.economies.push(null)"><span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Station Facilities -->
+    <div class="form-group">
+        <label for="stationFacilities" class="col-sm-{{ctrl.css.labelWidth}} control-label">Facilities</label>
+        <div ng-repeat="facility in ctrl.newStation.facilities">
+            <div ng-if="$first" class="col-sm-{{ctrl.css.inputWidth}}">
+                <select class="form-control" id="stationFacilities" ng-options="facility for facility in ctrl.difference(ctrl.stationFacilities, ctrl.newStation.facilities)" ng-model="ctrl.newStation.facilities[$index]">
+                    <option value="">{{ ctrl.newStation.facilities[$index] ? ctrl.newStation.facilities[$index] : "-- Choose Station Facility --"}}</option>
+                </select>
+            </div>
+            <div ng-if="$first && $last && ctrl.newStation.facilities[$index]" class="col-sm-{{ctrl.css.addonWidth}} first-stacked-btn-xs">
+                <button class="btn btn-success btn-xs" ng-click="ctrl.newStation.facilities.push(null)"><span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </div>
+            <div ng-if="!$first">
+                <div ng-if="!$first" class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}} stacked-input">
+                    <select class="form-control" ng-options="facility for facility in ctrl.difference(ctrl.stationFacilities, ctrl.newStation.facilities)" ng-model="ctrl.newStation.facilities[$index]">
+                        <option value="">{{ ctrl.newStation.facilities[$index] ? ctrl.newStation.facilities[$index] : "-- Choose Station Facility --"}}</option>
+                    </select>
+                </div>
+                <div class="col-sm-{{ctrl.css.addonWidth}} stacked-btn-xs">
+                    <button ng-if="!$first && ctrl.newStation.facilities[$index]" class="btn btn-danger btn-xs" ng-click="ctrl.newStation.facilities.splice($index,1)"><span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <button ng-if="$last && ctrl.newStation.facilities[$index]" class="btn btn-success btn-xs" ng-click="ctrl.newStation.facilities.push(null)"><span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Station Allegiance-->
+    <div class="form-group">
+        <label for="stationAllegiance" class="col-sm-{{ctrl.css.labelWidth}} control-label">Allegiance</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <select class="form-control" name="ctrl.inputs.stationAllegiance" id="stationAllegiance" ng-options="wealth for wealth in ctrl.stationAllegiance" ng-model="ctrl.newStation.allegiance">
+                <option value="">-- Choose Station Allegiance --</option>
+            </select>
+        </div>
+    </div>
+    <!-- Station Faction -->
+    <div class="form-group">
+        <label for="stationFaction" class="col-sm-{{ctrl.css.labelWidth}} control-label">Faction</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <input type="text" class="form-control" id="stationFaction" name="ctrl.inputs.stationFaction" placeholder="Enter Station Faction" ng-model="ctrl.newStation.faction" minlength="3" maxlength="255">
+        </div>
+    </div>
+    <!-- Station Government -->
+    <div class="form-group">
+        <label for="stationGovernment" class="col-sm-{{ctrl.css.labelWidth}} control-label">Government</label>
+        <div class="col-sm-{{ctrl.css.inputWidth}}">
+            <input id="stationGovernment" type="text" ng-model="ctrl.newStation.government" placeholder="Enter System Government" typeahead="system for system in ctrl.stationGovernment | filter:$viewValue | limitTo:8" typeahead-editable="false" class="form-control">
+        </div>
+    </div>
+    <!-- Station Black Market -->
+    <div ng-if="ctrl.indexOf(ctrl.newStation.facilities, 'Commodities') >= 0" class="form-group">
+        <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="ctrl.newStation.hasBlackMarket">Has Black Market
+                </label>
+            </div>
+        </div>
+    </div>
+    <!-- Station Commodities -->
+    <div ng-if="ctrl.indexOf(ctrl.newStation.facilities, 'Commodities') >= 0">
+        <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+            <hr>
+            <h2>Commodities</h2>
+        </div>
+
+        <div ng-if="!ctrl.newStation.snapshots.length" class="form-group">
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+                <button class="btn btn-success" ng-click="ctrl.addSnapshot(ctrl.newStation)"><span class="glyphicon glyphicon-plus"></span>Add Commodity Snapshot
+                </button>
+            </div>
+        </div>
+        <div ng-if="ctrl.newStation.snapshots.length" class="form-group-sm form-group">
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-2">
+                <label class="control-label" for="comName">Commodity Name</label>
+            </div>
+            <div class="col-sm-1">
+                <label class="control-label" for="comSellPrice">Sell Price</label>
+            </div>
+            <div class="col-sm-1">
+                <label class="control-label" for="comBuyPrice">Buy Price</label>
+            </div>
+            <div class="col-sm-1">
+                <label class="control-label" for="comDemand">Demand</label>
+            </div>
+            <div class="col-sm-1">
+                <label class="control-label" for="comSupply">Supply</label>
+            </div>
+            <div class="col-sm-1">
+                <label class="control-label" for="comGalAvg">Average</label>
+            </div>
+        </div>
+
+        <div class="form-group form-group-sm stacked-input" ng-repeat="snapshot in ctrl.newStation.snapshots">
+            <ng-form name="snapshotForm">
+                <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-2" ng-class="{'has-error':snapshotForm.comName.$invalid && snapshotForm.comName.$touched && !snapshot.commodity.isNew, 'has-success': snapshotForm.comName.$valid && snapshotForm.comName.$dirty}">
+                    <input type="text" class="form-control" name="comName" id="comName" ng-model="snapshot.commodity.name" typeahead="commodity for commodity in ctrl.getCommodityList($viewValue)" typeahead-editable="false">
+                    <span id="helpBlock" class="help-block" ng-show="snapshotForm.comName.$invalid && snapshotForm.comName.$touched && !snapshot.commodity.isNew">Does not exist.</span>
+                </div>
+
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="comSellPrice" ng-model="snapshot.sellPrice">
+                </div>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="comBuyPrice" ng-model="snapshot.buyPrice">
+                </div>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="comDemand" ng-model="snapshot.demand">
+                </div>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="comSupply" ng-model="snapshot.supply">
+                </div>
+                <div class="col-sm-1">
+                    <input type="number" class="form-control" id="comGalAvg" ng-model="snapshot.galacticAverage">
+                </div>
+                <div class="col-sm-2 first-stacked-btn-xs">
+                    <button class="btn btn-danger btn-xs" ng-click="ctrl.newStation.snapshots.splice($index, 1)"><span class="glyphicon glyphicon-minus"></span>
+                    </button>
+                    <span ng-if="$last && ctrl.snapshotIsValid(snapshot)" class="first-stacked-btn-xs">
+                    <button class="btn btn-success btn-xs" ng-click="ctrl.addSnapshot(ctrl.newStation)"><span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    </span>
+                    <span ng-if="!snapshot.commodity.isNew && snapshotForm.comName.$invalid" class="first-stacked-btn-xs">
+                    <button class="btn btn-success btn-xs" ng-click="ctrl.createCommodityModal(snapshotForm.comName.$viewValue, snapshot.galacticAverage, $index)"><span class="glyphicon glyphicon-save"></span> New Commodity
+                    </button>
+                    </span>
+                </div>
+            </ng-form>
+        </div>
+    </div>
+    <!-- Outfitting -->
+    <div ng-if="ctrl.indexOf(ctrl.newStation.facilities, 'Outfitting') >= 0">
+        <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+            <hr>
+            <h2>Outfitting</h2>
+        </div>
+
+        <div ng-if="!ctrl.newStation.outfitting.length" class="form-group">
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+                <button class="btn btn-success" ng-click="ctrl.newStation.outfitting.push({module:null,price:null})"><span class="glyphicon glyphicon-plus"></span>Add Module
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group" ng-repeat="module in ctrl.newStation.outfitting">
+            <label class="sr-only" for="moduleName">Module</label>
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-3">
+                <input type="text" class="form-control" id="modulePrice" placeholder="Module Name" ng-model="module.name">
+            </div>
+            <label class="sr-only" for="moduleClass">Class</label>
+            <div class="col-sm-1">
+                <select class="form-control" id="moduleClass" ng-options="class for class in ctrl.moduleClasses" ng-model="module.mClass">
+                    <option value="">Class</option>
+                </select>
+            </div>
+            <label class="sr-only" for="moduleSize">Size</label>
+            <div class="col-sm-1">
+                <input type="number" class="form-control" id="moduleSize" placeholder="Size" ng-model="module.size">
+            </div>
+            <label class="sr-only" for="modulePrice">Price</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" id="modulePrice" placeholder="Module Price" ng-model="module.price">
+            </div>
+            <div class="col-sm-2 first-stacked-btn-xs">
+                <button class="btn btn-danger btn-xs" ng-click="ctrl.newStation.outfitting.splice($index, 1)"><span class="glyphicon glyphicon-minus"></span>
+                </button>
+                <span ng-if="$last && module.name && module.mClass && module.size && module.price" class="first-stacked-btn-xs">
+                    <button class="btn btn-success btn-xs" ng-click="ctrl.newStation.outfitting.push({module:null,price:null})"><span class="glyphicon glyphicon-plus"></span>
+                </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- Shipyard -->
+    <div ng-if="ctrl.indexOf(ctrl.newStation.facilities, 'Shipyard') >= 0">
+        <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+            <hr>
+            <h2>Shipyard</h2>
+        </div>
+
+        <div ng-if="!ctrl.newStation.shipyard.length" class="form-group">
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}}">
+                <button class="btn btn-success" ng-click="ctrl.newStation.shipyard.push({ship:null,price:null})"><span class="glyphicon glyphicon-plus"></span>Add Ship
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group" ng-repeat="ship in ctrl.newStation.shipyard">
+            <label class="sr-only" for="shipName">Ship</label>
+            <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-5">
+                <input type="text" class="form-control" id="shipName" placeholder="Ship Name" ng-model="ship.name">
+            </div>
+            <label class="sr-only" for="shipPrice">Price</label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" id="shipPrice" placeholder="Ship Price" ng-model="ship.price">
+            </div>
+            <div class="col-sm-2 first-stacked-btn-xs">
+                <button class="btn btn-danger btn-xs" ng-click="ctrl.newStation.shipyard.splice($index, 1)"><span class="glyphicon glyphicon-minus"></span>
+                </button>
+                <span ng-if="$last && ship.name && ship.price" class="first-stacked-btn-xs">
+                    <button class="btn btn-success btn-xs" ng-click="ctrl.newStation.shipyard.push({name:null,price:null})"><span class="glyphicon glyphicon-plus"></span>
+                </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- Form Actions -->
+    <div class="form-group ">
+        <div class="col-sm-offset-{{ctrl.css.labelWidth}} col-sm-{{ctrl.css.inputWidth}} ">
+            <input type="submit " class="btn btn-primary " ng-click="ctrl.createNewStation(ctrl.newStation) " value="Save">
+            <input type="button " class="btn btn-default " ng-click="ctrl.reset(ctrl.form) " value="Reset">
+        </div>
+    </div>
+</form>

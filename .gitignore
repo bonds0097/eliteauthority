@@ -28,3 +28,4 @@ _testmain.go
 .vagrant
 server/src/gopkg.in
 server/src/github.com/gorilla
+server/src/github.com/jasonlvhit

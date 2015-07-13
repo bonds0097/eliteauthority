@@ -12,7 +12,9 @@ angular
     .module('clientApp', [
         'ngRoute',
         'ngResource',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ngLodash',
+        'ui.grid'
     ])
     .config(['$routeProvider', '$locationProvider', '$resourceProvider',
         function($routeProvider, $locationProvider, $resourceProvider) {
@@ -21,9 +23,17 @@ angular
                     templateUrl: 'views/main.html',
                     controller: 'MainCtrl as ctrl'
                 })
-                .when('/second', {
-                    templateUrl: 'views/second.html',
-                    controller: 'SecondCtrl as ctrl'
+                .when('/stations/add', {
+                    templateUrl: 'views/addstation.html',
+                    controller: 'AddstationCtrl as ctrl'
+                })
+                .when('/stations', {
+                    templateUrl: 'views/stations.html',
+                    controller: 'StationsCtrl as ctrl'
+                })
+                .when('/stations/:slug', {
+                    templateUrl: 'views/viewStation.html',
+                    controller: 'ViewStationCtrl as ctrl'
                 })
                 .otherwise({
                     redirectTo: '/'

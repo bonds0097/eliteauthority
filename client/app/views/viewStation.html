@@ -1,0 +1,17 @@
+<h1 class="page-header">{{::ctrl.station.name}} ({{::ctrl.station.system.name}})</h1>
+<accordion close-others="true">
+    <accordion-group heading="Basic Data" is-open="ctrl.tabs.basicData.open">
+        <accordion-heading>
+            Basic Data
+            <btn class="btn btn-primary" ng-if="ctrl.tabs.basicData.open">Hello!</btn>
+        </accordion-heading>
+    </accordion-group>
+    <accordion-group ng-if="ctrl.show.commodities" heading="Commodities">
+        <div ui-grid="ctrl.commodityGrid" class="snapshotGrid"></div>
+    </accordion-group>
+    <accordion-group ng-if="ctrl.show.outfitting" heading="Outfitting">
+    </accordion-group>
+    <accordion-group ng-if="ctrl.show.shipyard" heading="Shipyard">
+    </accordion-group>
+</accordion>
+{{ctrl.station}}

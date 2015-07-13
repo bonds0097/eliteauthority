@@ -9,5 +9,8 @@ import (
 func normalizeString(in string) (out string) {
 	out = strings.Title(webUtils.NormalizeWhitespace(in))
 
+	// Correct the issue that Title has with apostrophes.
+	out = strings.Replace(out, "'S", "'s", -1)
+
 	return
 }

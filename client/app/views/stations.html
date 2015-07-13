@@ -1,0 +1,29 @@
+<h1 class="page-header">Stations</h1>
+<accordion>
+    <accordion-group heading="Search">
+    </accordion-group>
+    <accordion-group heading="Recently Updated" is-open="true">
+        <table class="table table-hover">
+            <thead>
+                <th>Name</th>
+                <th>System</th>
+                <th>Description</th>
+                <th>Allegiance</th>
+                <th>Faction</th>
+                <th>Government</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="station in ctrl.recentStations" ng-click="ctrl.loadStation(station.slug)">
+                    <td>
+                        {{::station.name}}
+                    </td>
+                    <td>{{::station.system.name}}</td>
+                    <td>{{::ctrl.generateStationDescription(station)}}</td>
+                    <td>{{::station.allegiance}}</td>
+                    <td>{{::station.faction}}</td>
+                    <td>{{::station.government}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </accordion-group>
+</accordion>
